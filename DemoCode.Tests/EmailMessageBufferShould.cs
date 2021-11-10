@@ -1,73 +1,50 @@
-﻿using Xunit;
+﻿using AutoFixture;
+using AutoFixture.AutoMoq;
+using AutoFixture.Xunit2;
+using Moq;
+using System;
+using Xunit;
 
 namespace DemoCode.Tests
 {
     public class EmailMessageBufferShould
     {
         [Fact]
-        public void AddMessageToBuffer()
+        public void SendEmailToGateway_Manual_Moq()
         {
-            var sut = new EmailMessageBuffer();
+            // arrange
+            var fixture = new Fixture();
 
-            var message = new EmailMessage("sarah@dontcodetired.com",
-                                           "Hi, hope you are good today, Jason",
-                                           true,
-                                           "Test Subject");
+            var mockGateway = new Mock<IEmailGateway>();
 
+            var sut = new EmailMessageBuffer(mockGateway.Object);
 
-            sut.Add(message);
-
-            Assert.Equal(1, sut.UnsentMessagesCount);
-        }
+            sut.Add(fixture.Create<EmailMessage>());
 
 
-        [Fact]
-        public void RemoveMessageFromBufferWhenSent()
-        {
-            var sut = new EmailMessageBuffer();
-
-            var message = new EmailMessage("sarah@dontcodetired.com",
-                                           "Hi, hope you are good today, Jason",
-                                           true,
-                                           "Test Subject");
-
-            sut.Add(message);
-
-
+            // act
             sut.SendAll();
 
-            Assert.Equal(0, sut.UnsentMessagesCount);
+
+            // assert
+            mockGateway.Verify(x => x.Send(It.IsAny<EmailMessage>()), Times.Once());
         }
 
-
-        [Fact]
-        public void SendOnlySpecifiedNumberOfMessages()
+        [Theory]
+        [AutoMoqData]
+        public void SendEmailToGateway_AutoMoq(EmailMessage message,
+                                               [Frozen] Mock<IEmailGateway> mockGateway,
+                                               EmailMessageBuffer sut)
         {
-            var sut = new EmailMessageBuffer();
+            // arrange
+            sut.Add(message);
 
-            var message1 = new EmailMessage("sarah001@dontcodetired.com",
-                                           "Hi, hope you are good today, Jason",
-                                           true,
-                                           "Test Subject");
+            // act
+            sut.SendAll();
 
-
-            var message2 = new EmailMessage("sarah002@dontcodetired.com",
-                                            "Hi, hope you are good today, Jason",
-                                            true,
-                                            "Test Subject");
-
-            var message3 = new EmailMessage("sarah003@dontcodetired.com",
-                                            "Hi, hope you are good today, Jason",
-                                            true,
-                                            "Test Subject");
-
-            sut.Add(message1);
-            sut.Add(message2);
-            sut.Add(message3);
-
-            sut.SendLimited(2);
-
-            Assert.Equal(1, sut.UnsentMessagesCount);
+            // assert
+            mockGateway.Verify(x => x.Send(It.IsAny<EmailMessage>()), Times.Once());
         }
+
     }
 }
