@@ -1,30 +1,39 @@
-﻿using Xunit;
+﻿using System;
 using AutoFixture;
+using Xunit;
 
-namespace DemoCode.Tests {
-    public class NumberDemos {
-
+namespace DemoCode.Tests
+{
+    public class NumberDemos
+    {
         [Fact]
-        public void Inits() {
+        public void Ints()
+        {
+            // arrange
             var sut = new IntCalculator();
-            var fixture = new Fixture();
-            var anonymousNember = fixture.Create<int>();
+            Fixture fixture = new Fixture();
 
-            sut.Subtract(anonymousNember);
+            // act
+            sut.Subtract(fixture.Create<int>());
+
+            // assert
             Assert.True(sut.Value < 0);
         }
 
         [Fact]
-        public void Decimals() {
+        public void Decimals()
+        {
             // arrange
             var fixture = new Fixture();
             var sut = new DecimalCalculator();
+
             decimal num = fixture.Create<decimal>();
-            //act
+
+            // act
             sut.Add(num);
-            //assert
+
+            // assert
             Assert.Equal(num, sut.Value);
         }
-
     }
 }

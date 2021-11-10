@@ -1,12 +1,14 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 using AutoFixture;
 
-namespace DemoCode.Tests {
-    public class StringDemos {
-
+namespace DemoCode.Tests
+{
+    public class StringDemos
+    {
         [Fact]
-        public void BasicStrings() {
-            
+        public void BasicStrings()
+        {
             // arrange
             var fixture = new Fixture();
             var sut = new NameJoiner();
@@ -17,20 +19,19 @@ namespace DemoCode.Tests {
             // act
             var result = sut.Join(firstName, lastName);
 
-            //asert
+            // assert
             Assert.Equal(firstName + ' ' + lastName, result);
         }
 
         [Fact]
-        public void Chars() {
-
-            // arrenge 
+        public void Chars()
+        {
+            // arrange
             var fixture = new Fixture();
 
             var anonChar = fixture.Create<char>();
 
-            // act
-
+            // etc.
         }
     }
 }
