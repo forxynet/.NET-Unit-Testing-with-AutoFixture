@@ -13,5 +13,18 @@ namespace DemoCode.Tests {
             sut.Subtract(anonymousNember);
             Assert.True(sut.Value < 0);
         }
+
+        [Fact]
+        public void Decimals() {
+            // arrange
+            var fixture = new Fixture();
+            var sut = new DecimalCalculator();
+            decimal num = fixture.Create<decimal>();
+            //act
+            sut.Add(num);
+            //assert
+            Assert.Equal(num, sut.Value);
+        }
+
     }
 }
